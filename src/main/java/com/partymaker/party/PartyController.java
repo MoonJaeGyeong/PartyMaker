@@ -1,5 +1,6 @@
 package com.partymaker.party;
 
+import com.partymaker.party.dto.request.Character;
 import com.partymaker.party.dto.response.GetCharacterResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

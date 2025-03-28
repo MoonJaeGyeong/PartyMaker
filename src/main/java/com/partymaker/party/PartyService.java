@@ -1,8 +1,9 @@
 package com.partymaker.party;
 
 import com.partymaker.party.dto.CharacterInfo;
-import com.partymaker.party.dto.GetResponse;
+import com.partymaker.party.dto.request.Character;
 import com.partymaker.party.dto.response.GetCharacterResponse;
+import com.partymaker.party.dto.response.GetResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -12,7 +13,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -33,14 +33,6 @@ public class PartyService {
 
 
     public Object craeteParty(List<Character> request) {
-        String apiUrl = getUrl("애기븝미", "diregie");
-
-        // HTTP GET 요청 보내기
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(apiUrl, String.class);
-
-        // 응답 값
-        String responseBody = responseEntity.getBody();
-        System.out.println("GET Response: " + responseBody);
 
         return "";
     }
@@ -57,8 +49,13 @@ public class PartyService {
         CharacterInfo info = response.rows().get(0);
 
         BigInteger power = getPower(info.characterId(), serverId, info.jobGrowName());
+        if(isBuffer(info.jobGrowName())){
+            int castInt = power.divide(BigInteger.valueOf(10000)).intValue() ;
+            return GetCharacterResponse.of(info, castInt);
+        }
 
-        return GetCharacterResponse.of(response, power);
+        int castInt = power.divide(BigInteger.valueOf(100000000)).intValue() ;
+        return GetCharacterResponse.of(info, castInt);
     }
 
     private String getUrl(String characterName, String serverId) {
@@ -130,4 +127,5 @@ public class PartyService {
     private boolean isBuffer(String jobName){
         return jobName.matches(".*(인챈|뮤즈|크루).*");
     }
+
 }
