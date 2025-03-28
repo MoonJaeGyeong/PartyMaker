@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venus Party Maker</title>
+    <script>
+        async function getCharacter(serverId, characterName) {
+            const url = `http://43.201.48.67:8080/api/v1/party/getCharacter?serverId=${serverId}&characterName=${characterName}`;
+            console.log(url)
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`API 요청 실패: ${response.status}`);
+                }
+
+                const contentType = response.headers.get("content-type");
+
+                // JSON 형식 응답 처리
+                if (contentType && contentType.includes("application/json")) {
+                    const data = await response.json();
+                    console.log(data);  // 데이터 콘솔 출력 (필요시 데이터 활용)
+                    return data;  // 필요한 데이터 반환
+                } else {
+                    throw new Error("응답이 JSON 형식이 아님");
+                }
+            } catch (error) {
+                console.error("에러 발생:", error.message);
+                console.error(error.stack);
+            }
+        }
+
+        const isBuffer = (jabName) => ["크루세이더", "인챈트리스", "뮤즈"].includes(jobName) ? 1 : 0;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const add_person_btn = document.querySelector(".add_person");
+
+            add_person_btn.addEventListener("click", (e) => {
+                e.preventDefault();
+
+                // person List 생성
+                let personList = document.createElement("li");
+                personList.textContent = prompt("이름을 입력해 주세요.");
+                document.querySelector(".person_list").appendChild(personList);
+
+
+                // 캐릭터 추가 버튼
+                let addCharacterBtn = document.createElement("button");
+                addCharacterBtn.textContent = "+";
+                personList.appendChild(addCharacterBtn);
+
+                // 캐릭터 추가
+                addCharacterBtn.addEventListener("click", async (e) => {
+                    e.preventDefault();
+
+                    let character = document.createElement("span");
+                    let id = prompt("'서버명 캐릭터명'을 입력해 주세요.").split(' ');
+                    character.textContent = `[${id[0]}] ${id[1]}`;
+                    character.className = id[0];
+                    let info = await getCharacter(id[0], id[1]);
+                    if (isBuffer(info.jobName)) {
+                        character.style.backgroundColor = "pink";
+                    }
+                    else {
+                        character.style.backgroundColor = "skyblue";
+                    }
+                    personList.insertBefore(character, addCharacterBtn);
+                })
+
+
+                // 사람 삭제 버튼
+                let removeBtn = document.createElement("button");
+                removeBtn.textContent = "삭제";
+                personList.appendChild(removeBtn);
+
+                removeBtn.addEventListener("click", (e) => {
+                    personList.remove();
+                })
+
+
+            })
+        })
+    </script>
+</head>
+<body>
+<div class="wrapper">
+    <form>
+        <div>
+            <ul class="person_list">
+            </ul>
+        </div>
+        <button class="add_person">사람 추가</button>
+        <button type="submit">파티 짜기</button>
+    </form>
+</div>
+</body>
+</html>

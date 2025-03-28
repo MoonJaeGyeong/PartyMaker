@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: PartyMaker
+
+DNF:
+  api-key: NNXYhfxeEe4IaURyIKcR7U5TC1pj6rNF
