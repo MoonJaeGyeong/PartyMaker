@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.partymaker.PartyMakerApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-03-28T15:06:37.629Z" hostname="DESKTOP-6KRMUKE" time="0.735">
+  <properties/>
+  <testcase name="contextLoads()" classname="com.partymaker.PartyMakerApplicationTests" time="0.735"/>
+  <system-out><![CDATA[00:06:35.765 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.partymaker.PartyMakerApplicationTests]: PartyMakerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+00:06:35.907 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.partymaker.PartyMakerApplication for test class com.partymaker.PartyMakerApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.4)
+
+2025-03-29T00:06:36.418+09:00  INFO 13620 --- [PartyMaker] [    Test worker] c.partymaker.PartyMakerApplicationTests  : Starting PartyMakerApplicationTests using Java 17.0.11 with PID 13620 (started by bblbb in C:\Users\bblbb\Documents\GitHub\PartyMaker)
+2025-03-29T00:06:36.419+09:00  INFO 13620 --- [PartyMaker] [    Test worker] c.partymaker.PartyMakerApplicationTests  : No active profile set, falling back to 1 default profile: "default"
+2025-03-29T00:06:37.297+09:00  INFO 13620 --- [PartyMaker] [    Test worker] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2025-03-29T00:06:37.612+09:00  INFO 13620 --- [PartyMaker] [    Test worker] c.partymaker.PartyMakerApplicationTests  : Started PartyMakerApplicationTests in 1.524 seconds (process running for 2.864)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
