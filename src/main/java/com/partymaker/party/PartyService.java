@@ -2,6 +2,7 @@ package com.partymaker.party;
 
 import com.partymaker.party.dto.CharacterInfo;
 import com.partymaker.party.dto.request.Character;
+import com.partymaker.party.dto.response.CreatePartyResponse;
 import com.partymaker.party.dto.response.GetCharacterResponse;
 import com.partymaker.party.dto.response.GetResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +19,12 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigInteger;
 import java.time.Duration;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
-@Service
 @Slf4j
+@Service
 public class PartyService {
 
     @Value("${DNF.api-key}")
@@ -32,9 +33,88 @@ public class PartyService {
     private final RestTemplate restTemplate = new RestTemplate();
 
 
-    public Object craeteParty(List<Character> request) {
+    public List<CreatePartyResponse> createParty(List<Character> characters) {
+        List<Character> buffers = characters.stream().filter(Character::isBuffer).toList();
+        List<Character> dealers = characters.stream().filter(c -> !c.isBuffer()).collect(Collectors.toList());
 
-        return "";
+        List<CreatePartyResponse> allValidParties = new ArrayList<>();
+
+        for (Character buffer : buffers) {
+            List<List<Character>> dealerCombos = getValidDealerCombos(dealers, buffer.ownedName());
+
+            for (List<Character> dealerCombo : dealerCombos) {
+                Set<String> owners = dealerCombo.stream().map(Character::ownedName).collect(Collectors.toSet());
+                if (owners.size() < 3) continue;
+
+                long dealerPower = dealerCombo.stream().mapToLong(Character::power).sum();
+                long totalPower = dealerPower * buffer.power();
+
+                List<Character> partyMembers = new ArrayList<>(dealerCombo);
+                partyMembers.add(buffer);
+
+                allValidParties.add(new CreatePartyResponse(partyMembers, Long.toString(totalPower)));
+            }
+        }
+
+        return selectBestBalancedParties(allValidParties);
+    }
+
+    private static List<List<Character>> getValidDealerCombos(List<Character> dealers, String bufferOwner) {
+        List<List<Character>> result = new ArrayList<>();
+        int n = dealers.size();
+        for (int i = 0; i < n; i++) {
+            Character d1 = dealers.get(i);
+            if (d1.ownedName().equals(bufferOwner)) continue;
+            for (int j = i + 1; j < n; j++) {
+                Character d2 = dealers.get(j);
+                if (d2.ownedName().equals(bufferOwner)) continue;
+                for (int k = j + 1; k < n; k++) {
+                    Character d3 = dealers.get(k);
+                    if (d3.ownedName().equals(bufferOwner)) continue;
+
+                    Set<String> ownerSet = Set.of(d1.ownedName(), d2.ownedName(), d3.ownedName());
+                    if (ownerSet.size() < 3) continue;
+
+                    result.add(List.of(d1, d2, d3));
+                }
+            }
+        }
+        return result;
+    }
+
+    private static List<CreatePartyResponse> selectBestBalancedParties(List<CreatePartyResponse> parties) {
+        parties.sort(Comparator.comparing(p -> Long.parseLong(p.totalPower())));
+
+        List<CreatePartyResponse> result = new ArrayList<>();
+        Set<Integer> usedIndexes = new HashSet<>();
+
+        for (int i = 0; i < parties.size(); i++) {
+            if (usedIndexes.contains(i)) continue;
+            CreatePartyResponse p1 = parties.get(i);
+
+            int bestMatch = -1;
+            long minDiff = Long.MAX_VALUE;
+
+            for (int j = i + 1; j < parties.size(); j++) {
+                if (usedIndexes.contains(j)) continue;
+                CreatePartyResponse p2 = parties.get(j);
+
+                long diff = Math.abs(Long.parseLong(p1.totalPower()) - Long.parseLong(p2.totalPower()));
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    bestMatch = j;
+                }
+            }
+
+            if (bestMatch != -1) {
+                result.add(p1);
+                result.add(parties.get(bestMatch));
+                usedIndexes.add(i);
+                usedIndexes.add(bestMatch);
+            }
+        }
+
+        return result;
     }
 
     public GetCharacterResponse getCharacter(String serverId, String characterName){
