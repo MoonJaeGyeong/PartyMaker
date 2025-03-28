@@ -3,13 +3,15 @@ package com.partymaker.party.dto.response;
 import com.partymaker.party.dto.CharacterInfo;
 import com.partymaker.party.dto.GetResponse;
 
+import java.math.BigInteger;
+
 public record GetCharacterResponse(
         String serverId,
         String characterName,
         String jobName,
-        Long power
+        BigInteger power
 ) {
-    public static GetCharacterResponse of(GetResponse getResponse, long power){
+    public static GetCharacterResponse of(GetResponse getResponse, BigInteger power){
         if(getResponse == null){
             return null;
         }

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigInteger;
 import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
@@ -55,7 +56,7 @@ public class PartyService {
         }
         CharacterInfo info = response.rows().get(0);
 
-        long power = getPower(info.characterId(), serverId, info.jobGrowName());
+        BigInteger power = getPower(info.characterId(), serverId, info.jobGrowName());
 
         return GetCharacterResponse.of(response, power);
     }
@@ -65,7 +66,7 @@ public class PartyService {
         return url;
     }
 
-    private long getPower(String characterId, String serverId, String jobName) {
+    private BigInteger getPower(String characterId, String serverId, String jobName) {
         String os = System.getProperty("os.name").toLowerCase();
         WebDriver driver;
 
@@ -87,7 +88,7 @@ public class PartyService {
         String url = "https://dundam.xyz/character?server=" + serverId + "&key=" + characterId;
         String power = crawl(driver, url, jobName);
 
-        return Long.parseLong(power.replaceAll(",", ""));
+        return new BigInteger(power.replaceAll(",", ""));
     }
 
     private String crawl(WebDriver driver, String url, String jobName){
