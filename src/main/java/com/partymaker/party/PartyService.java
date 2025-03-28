@@ -62,7 +62,13 @@ public class PartyService {
 
         // 1. WebDriver와 ChromeDriver 설정
         // 프로젝트 폴더 기준으로 chromedirver.exe 파일의 위치를 작성
-        System.setProperty("webdriver.chrome.driver", "driver/chromedriver.exe");
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.contains("win")) {
+            System.setProperty("webdriver.chrome.driver", "driver/chromedriver.exe");
+        } else {
+            System.setProperty("webdriver.chrome.driver", "/home/ubuntu/drivers/chromedriver");
+        }
         WebDriver driver = new ChromeDriver();
 
         try {
@@ -71,7 +77,7 @@ public class PartyService {
             driver.get(url);
 
             // WebDriverWait을 사용해 요소가 나타날 때까지 기다리기
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
             WebElement dvalElement = wait.until(
                     ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#content-container > div.new-cinfo > div.c-aba-stat > div > div.abas-bottom > div.abbot-alldeal > div > div > div > div > div > span.dval"))
             );
