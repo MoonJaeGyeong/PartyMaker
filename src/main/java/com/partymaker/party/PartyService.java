@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.Duration;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -63,13 +65,22 @@ public class PartyService {
         // 1. WebDriver와 ChromeDriver 설정
         // 프로젝트 폴더 기준으로 chromedirver.exe 파일의 위치를 작성
         String os = System.getProperty("os.name").toLowerCase();
+        WebDriver driver;
 
         if (os.contains("win")) {
             System.setProperty("webdriver.chrome.driver", "driver/chromedriver.exe");
+            driver = new ChromeDriver();
         } else {
             System.setProperty("webdriver.chrome.driver", "/home/ubuntu/drivers/chromedriver");
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless=new");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+
+            options.addArguments("--user-data-dir=/tmp/chrome-profile-" + UUID.randomUUID());
+            driver = new ChromeDriver(options);
         }
-        WebDriver driver = new ChromeDriver();
 
         try {
             // 웹 페이지 접속
