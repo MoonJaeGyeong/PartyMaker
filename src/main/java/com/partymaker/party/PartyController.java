@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/party")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class PartyController {
 
@@ -18,7 +17,7 @@ public class PartyController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createParty(@RequestBody List<Character> request){
-        Object response = partyService.craeteParty(request);
+        Object response = partyService.createParty(request);
         return ResponseEntity.ok(response);
     }
 
