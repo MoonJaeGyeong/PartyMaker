@@ -98,7 +98,7 @@ public class PartyService {
             driver.get(url);
 
             // WebDriverWait을 사용해 요소가 나타날 때까지 기다리기
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 
             if(isBuffer(jobName)){
                 WebElement dvalElement = wait.until(
